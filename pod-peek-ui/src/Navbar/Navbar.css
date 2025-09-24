@@ -1,0 +1,89 @@
+.navbar {
+  width: 100%; /* full width */
+  background-color: #ffffff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+/* Container flex layout */
+.navbar-container {
+  width: 100%; /* full width */
+  padding: 0 2rem; /* optional side padding */
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* logo left, toggle right */
+  height: 4rem;
+  position: relative;
+}
+
+/* Logo on left */
+.navbar-logo {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #4f46e5;
+  z-index: 1; 
+}
+
+/* Desktop menu centered */
+.navbar-menu {
+  display: none;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.navbar-menu a {
+  margin: 0 3rem;
+  font-weight: 500;
+  color: #374151;
+  text-decoration: none;
+  transition: color 0.2s ease-in-out;
+}
+
+.navbar-menu a:hover {
+  color: #4f46e5;
+}
+
+/* Mobile toggle button on right */
+.navbar-toggle {
+  background: none;
+  border: none;
+  color: #374151;
+  cursor: pointer;
+}
+
+.navbar-toggle:hover {
+  color: #4f46e5;
+}
+
+/* Mobile menu */
+.navbar-mobile {
+  display: none;
+  background-color: #ffffff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  padding: 1rem;
+}
+
+.navbar-mobile a {
+  display: block;
+  margin-bottom: 1rem;
+  color: #374151;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.navbar-mobile a:hover {
+  color: #4f46e5;
+}
+
+/* Responsive display */
+@media (min-width: 768px) {
+  .navbar-menu {
+    display: flex;
+  }
+  .navbar-toggle {
+    display: none;
+  }
+}
