@@ -16,17 +16,36 @@
 
 .pod-header {
   display: flex;
-  justify-content: space-between;
+  align-items: center;
+  gap: 16px; /* space between pod name and stats */
   margin-bottom: 8px;
 }
 
-.pod-header .pod-name {
+.pod-name {
   font-weight: bold;
   color: #1a202c; /* gray.800 */
 }
 
-.pod-header .pod-status {
-  font-size: 0.875rem; /* sm */
+.pod-status {
+    font-weight: bold;
+    font-size: 0.875rem; /* sm */
+    color: inherit; /* allow inline color for status (green/red) */
+}
+
+.pod-replicas-circle {
+  width: 50px;
+  height: 50px;
+  position: relative;
+}
+
+.pod-replicas-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 0.7rem;
+  font-weight: bold;
+  color: #1a202c;
 }
 
 .pod-divider {
@@ -46,13 +65,13 @@
 .pod-input-text {
   font-size: 0.875rem;
   color: #4a5568; /* gray.600 */
-  margin-left: 4px; /* smaller gap from handle to text */
+  margin-left: 4px;
 }
 
 .pod-port-text {
   font-size: 0.875rem;
   color: #4a5568; /* gray.600 */
-  margin-right: 4px; /* smaller gap from handle to text */
+  margin-right: 4px;
 }
 
 .pod-input-handle,
@@ -73,3 +92,9 @@
 .pod-port-handle {
   right: -22.5px;
 }
+
+.pod-env {
+  padding-left: 8px;
+  margin-top: 4px;
+}
+

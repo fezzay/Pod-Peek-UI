@@ -1,0 +1,70 @@
+.service-node {
+  background-color: white;
+  border-radius: 8px;
+  padding: 12px;
+  border: 1px solid #cbd5e0;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+  min-width: 180px;
+  position: relative;
+}
+
+.service-header {
+  display: flex;
+  justify-content: space-between; /* keeps name left, type right */
+  align-items: center;
+  margin-bottom: 6px;
+  gap: 8px; /* space between children if needed */
+}
+
+.service-name {
+  font-weight: bold;
+  color: #1a202c;
+}
+
+.service-type {
+  font-size: 0.875rem;
+  color: #4a5568;
+  margin-left: 12px; /* adds space from the name */
+}
+
+.service-divider {
+  height: 1px;
+  background-color: #cbd5e0;
+  margin-bottom: 6px;
+}
+
+.service-port {
+  display: flex;
+  align-items: center;
+  margin-bottom: 4px;
+  position: relative;
+}
+
+.service-port-text {
+  font-size: 0.875rem;
+  color: #4a5568;
+}
+
+/* optional class to align output text to right side */
+.service-port-text.output {
+  margin-left: auto;
+}
+
+.service-input-handle,
+.service-port-handle {
+  width: 12px;
+  height: 12px;
+  background-color: #4f46e5;
+  border: 2px solid white;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.service-input-handle {
+  left: -22.5px;
+}
+
+.service-port-handle {
+  right: -22.5px;
+}
