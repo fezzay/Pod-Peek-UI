@@ -13,7 +13,7 @@ interface PodNodeProps {
     replicasTotal?: number;
     ports: { name: string; port: number }[];
     inputs?: string[];
-    env?: { key: string; value: string }[]; // environment variables
+    env?: { key: string; value: string }[];
   };
 }
 
@@ -60,29 +60,27 @@ export const PodNode: React.FC<PodNodeProps> = ({ data }) => {
       <Box className="pod-divider" />
 
       {/* Regular Inputs */}
-      {data.inputs && data.inputs.length > 0 && (
-        <Box>
-          {data.inputs.map((input, index) => (
-            <Flex key={index} className="pod-input">
-              <Handle
-                type="target"
-                position={Position.Left}
-                id={`input-${index}`}
-                className="pod-input-handle"
-              />
-              <Text className="pod-input-text">{input}</Text>
-            </Flex>
-          ))}
-        </Box>
-      )}
+      {data.inputs?.map((input, index) => (
+        <Flex key={`input-${index}`} className="pod-input">
+          <Handle
+            key={`handle-input-${index}`}
+            type="target"
+            position={Position.Left}
+            id={`input-${index}`}
+            className="pod-input-handle"
+          />
+          <Text className="pod-input-text">{input}</Text>
+        </Flex>
+      ))}
 
       {/* Ports */}
-      {data.ports.map((port, index) => (
-        <Flex key={index} className="pod-port" justify="flex-end">
+      {data.ports?.map((port, index) => (
+        <Flex key={`port-${index}`} className="pod-port" justify="flex-end">
           <Text className="pod-port-text">
             {port.name}:{port.port}
           </Text>
           <Handle
+            key={`handle-port-${index}`}
             type="source"
             position={Position.Right}
             id={`port-${index}`}
@@ -110,50 +108,41 @@ export const PodNode: React.FC<PodNodeProps> = ({ data }) => {
 
           {/* Collapsed handle */}
           {!showEnv && (
-            <Box>
-                <Flex
-                className="pod-input"
-                align="center"
-                  position="relative"
-                >
-                    {data.env.map((_, idx) => (
-                  <Handle
-                    type="target"
-                    position={Position.Left}
-                    id={`env-${idx}`}
-                    className="pod-input-handle"
-                  />
+            <Flex className="pod-input" align="center" position="relative">
+              {data.env.map((_, idx) => (
+                <Handle
+                  key={`collapsed-env-handle-${idx}`}
+                  type="target"
+                  position={Position.Left}
+                  id={`env-${idx}`}
+                  className="pod-input-handle"
+                />
               ))}
-              <Text className="pod-input-text">
-                    Environment Variables
-                  </Text>
-                </Flex>
-            </Box>
+              <Text className="pod-input-text">Environment Variables</Text>
+            </Flex>
           )}
 
           {/* Expanded env variables */}
-          {showEnv && (
-            <Box>
-              {data.env.map((envVar, idx) => (
-                <Flex
-                  key={idx}
-                  className="pod-input"
-                  align="center"
-                  position="relative"
-                >
-                  <Handle
-                    type="target"
-                    position={Position.Left}
-                    id={`env-${idx}`}
-                    className="pod-input-handle"
-                  />
-                  <Text className="pod-input-text">
-                    {envVar.key}: {envVar.value}
-                  </Text>
-                </Flex>
-              ))}
-            </Box>
-          )}
+          {showEnv &&
+            data.env.map((envVar, idx) => (
+              <Flex
+                key={`expanded-env-${idx}`}
+                className="pod-input"
+                align="center"
+                position="relative"
+              >
+                <Handle
+                  key={`handle-env-${idx}`}
+                  type="target"
+                  position={Position.Left}
+                  id={`env-${idx}`}
+                  className="pod-input-handle"
+                />
+                <Text className="pod-input-text">
+                  {envVar.key}: {envVar.value}
+                </Text>
+              </Flex>
+            ))}
         </Box>
       )}
     </Box>

@@ -39,12 +39,6 @@ html, body, #root {
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-/* Optional hover effect */
-.app-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
-}
-
 /* Responsive padding */
 @media (max-width: 768px) {
   .app-content {

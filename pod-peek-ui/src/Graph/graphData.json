@@ -4,82 +4,132 @@
       "id": "pod-1",
       "type": "pod",
       "data": {
-        "podName": "nginx-pod",
+        "podName": "api-backend-pod",
         "status": "Running",
         "replicasRunning": 3,
         "replicasTotal": 3,
         "ports": [
-          { "name": "http", "port": 80 },
-          { "name": "https", "port": 443 }
+          { "name": "http", "port": 1557 },
+          { "name": "https", "port": 1558 }
         ],
         "inputs": ["configmap", "service-a"],
         "env": [
-          { "key": "NODE_ENV", "value": "production" },
-          { "key": "API_URL", "value": "https://api.example.com" }
+          { "key": "NODE_ENV", "value": "production" }
         ]
       },
-      "position": { "x": 100, "y": 100 }
+      "position": { "x": 0, "y": 200 }
     },
     {
       "id": "svc-1",
       "type": "service",
       "data": {
-        "serviceName": "nginx-service",
+        "serviceName": "api-backend-service",
         "type": "ClusterIP",
         "ports": [
-          { "name": "http", "port": 80, "targetPort": 8080 },
-          { "name": "https", "port": 443, "targetPort": 8443 }
+          { "name": "http", "port": 1557, "targetPort": 1557 },
+          { "name": "https", "port": 1558, "targetPort": 1558 }
         ],
         "selectors": ["app=nginx"]
       },
-      "position": { "x": 500, "y": 150 }
+      "position": { "x": 500, "y": 250 }
     },
     {
       "id": "pod-2",
       "type": "pod",
       "data": {
-        "podName": "backend-pod",
+        "podName": "frontend-pod",
         "status": "Pending",
         "replicasRunning": 4,
         "replicasTotal": 5,
-        "ports": [{ "name": "api", "port": 3000 }],
+        "ports": [
+          { "name": "http", "port": 80 },
+          { "name": "https", "port": 443}
+        ],
         "inputs": ["database"],
         "env": [
           { "key": "NODE_ENV", "value": "staging" },
-          { "key": "DB_HOST", "value": "db.example.com" }
+          { "key": "BACKEND_URL", "value": "api-backend-service:1557" }
         ]
       },
-      "position": { "x": 1000, "y": 250 }
+      "position": { "x": 1000, "y": 50 }
+    },
+    {
+      "id": "svc-2",
+      "type": "service",
+      "data": {
+        "serviceName": "frontend-service",
+        "type": "ClusterIP",
+        "ports": [
+          { "name": "http", "port": 80, "targetPort": 80 },
+          { "name": "https", "port": 443, "targetPort": 443 }
+        ],
+        "selectors": ["app=nginx"]
+      },
+      "position": { "x": 1500, "y": 150 }
+    },
+    {
+      "id": "ing-1",
+      "type": "ingress",
+      "data": {
+        "ingressName": "main-ingress",
+        "hosts": ["example.com"],
+        "rules": [
+          { "path": "/", "service": "frontend-service", "port": 443 },
+          { "path": "/api", "service": "api-backend-service", "port": 1558 }
+        ]
+      },
+      "position": { "x": 2000, "y": 200 }
     }
   ],
   "edges": [
     {
-      "id": "e1-svc",
+      "id": "api-pod-http:api-svc-http",
       "source": "pod-1",
       "target": "svc-1",
       "sourceHandle": "port-0",
       "targetHandle": "port-0"
     },
     {
-      "id": "svc-pod2",
+      "id": "api-pod-https:api-svc-https",
+      "source": "pod-1",
+      "target": "svc-1",
+      "sourceHandle": "port-1",
+      "targetHandle": "port-1"
+    },
+    {
+      "id": "api-svc-http:front-pod-env",
       "source": "svc-1",
       "target": "pod-2",
       "sourceHandle": "targetPort-0",
-      "targetHandle": "input-0"
-    },
-    {
-      "id": "env1-pod2",
-      "source": "svc-1",
-      "target": "pod-2",
-      "sourceHandle": "targetPort-1",
-      "targetHandle": "env-0"
-    },
-    {
-      "id": "env2-pod2",
-      "source": "pod-1",
-      "target": "pod-2",
-      "sourceHandle": "port-1",
       "targetHandle": "env-1"
+    },
+    {
+      "id": "front-pod-http:front-svc-http",
+      "source": "pod-2",
+      "target": "svc-2",
+      "sourceHandle": "port-0",
+      "targetHandle": "port-0"
+    },
+    {
+      "id": "front-pod-https:front-svc-https",
+      "source": "pod-2",
+      "target": "svc-2",
+      "sourceHandle": "port-1",
+      "targetHandle": "port-1"
+    },
+    {
+      "id": "front-svc-https:ingress-front",
+      "source": "svc-2",
+      "target": "ing-1",
+      "sourceHandle": "targetPort-1",
+      "targetHandle": "rule-0"
+    },
+    {
+      "id": "api-svc-https:ingress-back",
+      "source": "svc-1",
+      "target": "ing-1",
+      "sourceHandle": "targetPort-1",
+      "targetHandle": "rule-1"
     }
   ]
 }

@@ -8,6 +8,11 @@
   position: relative;
 }
 
+.service-node:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px);
+}
+
 .service-header {
   display: flex;
   justify-content: space-between; /* keeps name left, type right */
@@ -19,10 +24,11 @@
 .service-name {
   font-weight: bold;
   color: #1a202c;
+  font-size: 1.2rem;
 }
 
 .service-type {
-  font-size: 0.875rem;
+  font-size: 1.2rem;
   color: #4a5568;
   margin-left: 12px; /* adds space from the name */
 }
@@ -41,7 +47,7 @@
 }
 
 .service-port-text {
-  font-size: 0.875rem;
+  font-size: 1.1rem;
   color: #4a5568;
 }
 

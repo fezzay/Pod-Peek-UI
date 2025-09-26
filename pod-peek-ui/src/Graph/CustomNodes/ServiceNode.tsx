@@ -13,7 +13,7 @@ interface ServiceNodeProps {
 
 export const ServiceNode: React.FC<ServiceNodeProps> = ({ data }) => {
   return (
-    <Box className="service-node">
+    <Box className="service-node" style={{ width: '100%', height: '100%' }}>
       {/* Header */}
       <Flex className="service-header">
         <Text className="service-name">{data.serviceName}</Text>

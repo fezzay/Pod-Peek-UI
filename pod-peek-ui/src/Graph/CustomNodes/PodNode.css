@@ -17,18 +17,21 @@
 .pod-header {
   display: flex;
   align-items: center;
-  gap: 16px; /* space between pod name and stats */
+  justify-content: space-between; /* Pushes right-side content to edge */
   margin-bottom: 8px;
+  gap: 16px;
 }
+
 
 .pod-name {
   font-weight: bold;
   color: #1a202c; /* gray.800 */
+  font-size: 1.2rem;
 }
 
 .pod-status {
     font-weight: bold;
-    font-size: 0.875rem; /* sm */
+    font-size: 1.2rem; /* sm */
     color: inherit; /* allow inline color for status (green/red) */
 }
 
@@ -63,13 +66,13 @@
 }
 
 .pod-input-text {
-  font-size: 0.875rem;
+  font-size: 1.1rem;
   color: #4a5568; /* gray.600 */
   margin-left: 4px;
 }
 
 .pod-port-text {
-  font-size: 0.875rem;
+  font-size: 1.1rem;
   color: #4a5568; /* gray.600 */
   margin-right: 4px;
 }
