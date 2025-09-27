@@ -11,14 +11,18 @@ interface PodNodeProps {
     status: string;
     replicasRunning?: number;
     replicasTotal?: number;
-    ports: { name: string; port: number }[];
-    inputs?: string[];
-    env?: { key: string; value: string }[];
+    containers: {
+      name?: string;
+      image?: string;
+      ports: { name: string; port: number }[];
+      mounts: string[];
+      env: { key: string; value: string }[];
+    }[];
   };
 }
 
 export const PodNode: React.FC<PodNodeProps> = ({ data }) => {
-  const [showEnv, setShowEnv] = useState(false);
+  const [expanded, setExpanded] = useState<Record<number, boolean>>({});
 
   const percent =
     data.replicasRunning && data.replicasTotal
@@ -32,12 +36,10 @@ export const PodNode: React.FC<PodNodeProps> = ({ data }) => {
       {/* Pod Header */}
       <Flex className="pod-header">
         <Text className="pod-name">{data.podName}</Text>
-
         <Flex align="center" gap={3}>
           <Text className="pod-status" color={statusColor}>
             {data.status}
           </Text>
-
           {data.replicasRunning !== undefined && data.replicasTotal !== undefined && (
             <Box className="pod-replicas-circle">
               <CircularProgressbar
@@ -57,94 +59,133 @@ export const PodNode: React.FC<PodNodeProps> = ({ data }) => {
         </Flex>
       </Flex>
 
-      <Box className="pod-divider" />
+      {/* Containers */}
+      {data.containers?.map((container, cindex) => {
+        const isOpen = expanded[cindex] ?? true;
 
-      {/* Regular Inputs */}
-      {data.inputs?.map((input, index) => (
-        <Flex key={`input-${index}`} className="pod-input">
-          <Handle
-            key={`handle-input-${index}`}
-            type="target"
-            position={Position.Left}
-            id={`input-${index}`}
-            className="pod-input-handle"
-          />
-          <Text className="pod-input-text">{input}</Text>
-        </Flex>
-      ))}
+        const leftHandles = [
+          ...(container.mounts?.map((_, mIdx) => `c${cindex}-mount-${mIdx}`) ?? []),
+          ...(container.env?.map((_, eIdx) => `c${cindex}-env-${eIdx}`) ?? []),
+        ];
 
-      {/* Ports */}
-      {data.ports?.map((port, index) => (
-        <Flex key={`port-${index}`} className="pod-port" justify="flex-end">
-          <Text className="pod-port-text">
-            {port.name}:{port.port}
-          </Text>
-          <Handle
-            key={`handle-port-${index}`}
-            type="source"
-            position={Position.Right}
-            id={`port-${index}`}
-            className="pod-port-handle"
-          />
-        </Flex>
-      ))}
+        const rightHandles = [...(container.ports?.map((_, pIdx) => `c${cindex}-port-${pIdx}`) ?? [])];
 
-      {/* Collapsible Environment Variables */}
-      {data.env && data.env.length > 0 && (
-        <Box mt={2}>
-          {/* Divider + Toggle */}
-          <Flex align="center" justify="center" mb={2} position="relative">
-            <Box flex="1" height="1px" bg="gray.300" mr={2} />
-            <IconButton
-              aria-label="Toggle env"
-              as={showEnv ? FiChevronUp : FiChevronDown}
-              size="sm"
-              onClick={() => setShowEnv(!showEnv)}
-              variant="ghost"
-              color="#1a202c"
-            />
-            <Box flex="1" height="1px" bg="gray.300" ml={2} />
-          </Flex>
-
-          {/* Collapsed handle */}
-          {!showEnv && (
-            <Flex className="pod-input" align="center" position="relative">
-              {data.env.map((_, idx) => (
-                <Handle
-                  key={`collapsed-env-handle-${idx}`}
-                  type="target"
-                  position={Position.Left}
-                  id={`env-${idx}`}
-                  className="pod-input-handle"
-                />
-              ))}
-              <Text className="pod-input-text">Environment Variables</Text>
+        return (
+          <Box key={`container-${cindex}`} className="pod-container-card">
+            {/* Container Header */}
+            <Flex justify="space-between" align="center" mb={1}>
+              <Text className="pod-container-name">
+                {container.name ?? `Container ${cindex + 1}`}
+              </Text>
+              <IconButton
+                aria-label="Toggle container"
+                as={isOpen ? FiChevronUp : FiChevronDown}
+                size="sm"
+                onClick={() =>
+                  setExpanded(prev => ({ ...prev, [cindex]: !isOpen }))
+                }
+                variant="ghost"
+                color="#1a202c"
+              />
             </Flex>
-          )}
 
-          {/* Expanded env variables */}
-          {showEnv &&
-            data.env.map((envVar, idx) => (
-              <Flex
-                key={`expanded-env-${idx}`}
-                className="pod-input"
-                align="center"
-                position="relative"
-              >
-                <Handle
-                  key={`handle-env-${idx}`}
-                  type="target"
-                  position={Position.Left}
-                  id={`env-${idx}`}
-                  className="pod-input-handle"
-                />
-                <Text className="pod-input-text">
-                  {envVar.key}: {envVar.value}
-                </Text>
-              </Flex>
-            ))}
-        </Box>
-      )}
+            {container.image && (
+              <Text className="pod-container-image">{container.image}</Text>
+            )}
+
+            {isOpen ? (
+              <>
+                {/* Mounts */}
+                {container.mounts?.length > 0 && (
+                  <>
+                    <Text className="pod-section-title left">Volume Mounts</Text>
+                    <Box className="pod-divider" />
+                    {container.mounts.map((mount, mIdx) => (
+                      <Flex key={`c${cindex}-mount-${mIdx}`} className="pod-item-row">
+                        <Handle
+                          type="target"
+                          position={Position.Left}
+                          id={`c${cindex}-mount-${mIdx}`}
+                          className="pod-handle left"
+                        />
+                        <Text className="pod-item-text left">{mount}</Text>
+                      </Flex>
+                    ))}
+                  </>
+                )}
+
+                {/* Ports */}
+                {container.ports?.length > 0 && (
+                  <>
+                    <Text className="pod-section-title right">Ports</Text>
+                    <Box className="pod-divider" />
+                    {container.ports.map((port, pIdx) => (
+                      <Flex
+                        key={`c${cindex}-port-${pIdx}`}
+                        className="pod-item-row"
+                        justify="flex-end"
+                      >
+                        <Text className="pod-item-text right">
+                          {port.name}:{port.port}
+                        </Text>
+                        <Handle
+                          type="source"
+                          position={Position.Right}
+                          id={`c${cindex}-port-${pIdx}`}
+                          className="pod-handle right"
+                        />
+                      </Flex>
+                    ))}
+                  </>
+                )}
+
+                {/* Env */}
+                {container.env?.length > 0 && (
+                  <>
+                    <Text className="pod-section-title left">Environment</Text>
+                    <Box className="pod-divider" />
+                    {container.env.map((envVar, eIdx) => (
+                      <Flex key={`c${cindex}-env-${eIdx}`} className="pod-item-row">
+                        <Handle
+                          type="target"
+                          position={Position.Left}
+                          id={`c${cindex}-env-${eIdx}`}
+                          className="pod-handle left"
+                        />
+                        <Text className="pod-item-text left">
+                          {envVar.key}: {envVar.value}
+                        </Text>
+                      </Flex>
+                    ))}
+                  </>
+                )}
+              </>
+            ) : (
+              <>
+                {/* Collapsed proxy handles */}
+                {leftHandles.map((id) => (
+                  <Handle
+                    key={`proxy-left-${id}`}
+                    type="target"
+                    position={Position.Left}
+                    id={id}
+                    className={`pod-handle left collapsed`}
+                  />
+                ))}
+                {rightHandles.map((id) => (
+                  <Handle
+                    key={`proxy-right-${id}`}
+                    type="source"
+                    position={Position.Right}
+                    id={id}
+                    className={`pod-handle right collapsed`}
+                  />
+                ))}
+              </>
+            )}
+          </Box>
+        );
+      })}
     </Box>
   );
 };

@@ -47,10 +47,10 @@
   /* Handles */
   .ingress-input-handle,
   .ingress-output-handle {
-    width: 12px;
-    height: 12px;
-    background-color: #2563eb; /* blue */
-    border: 2px solid white;
+    width: 16px;
+    height: 16px;
+    background-color: #4f46e5;
+    border: 2px solid #cbd5e0;
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
@@ -58,11 +58,11 @@
   
   /* Hosts: handle on the right */
   .ingress-input-handle {
-    right: -22px;
+    right: -24.5px;
   }
   
   /* Rules: handle on the left */
   .ingress-output-handle {
-    left: -22px;
+    left: -24.5px;
   }
   

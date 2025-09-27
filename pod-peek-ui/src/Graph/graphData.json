@@ -8,13 +8,19 @@
         "status": "Running",
         "replicasRunning": 3,
         "replicasTotal": 3,
-        "ports": [
-          { "name": "http", "port": 1557 },
-          { "name": "https", "port": 1558 }
-        ],
-        "inputs": ["configmap", "service-a"],
-        "env": [
-          { "key": "NODE_ENV", "value": "production" }
+        "containers": [
+          {
+            "name": "be",
+            "image": "fezzzy/docker.io",
+            "ports": [
+              { "name": "http", "port": 1557 },
+              { "name": "https", "port": 1558 }
+            ],
+            "mounts": ["/config", "/data"],
+            "env": [
+              { "key": "NODE_ENV", "value": "production" }
+            ]
+          }
         ]
       },
       "position": { "x": 0, "y": 200 }
@@ -41,14 +47,20 @@
         "status": "Pending",
         "replicasRunning": 4,
         "replicasTotal": 5,
-        "ports": [
-          { "name": "http", "port": 80 },
-          { "name": "https", "port": 443}
-        ],
-        "inputs": ["database"],
-        "env": [
-          { "key": "NODE_ENV", "value": "staging" },
-          { "key": "BACKEND_URL", "value": "api-backend-service:1557" }
+        "containers": [
+          {
+            "name": "fe",
+            "image": "fezzzy/docker.io",
+            "ports": [
+              { "name": "http", "port": 80 },
+              { "name": "https", "port": 443}
+            ],
+            "mounts": ["/data"],
+            "env": [
+              { "key": "NODE_ENV", "value": "staging" },
+              { "key": "BACKEND_URL", "value": "api-backend-service:1557" }
+            ]
+          }
         ]
       },
       "position": { "x": 1000, "y": 50 }
@@ -86,14 +98,14 @@
       "id": "api-pod-http:api-svc-http",
       "source": "pod-1",
       "target": "svc-1",
-      "sourceHandle": "port-0",
+      "sourceHandle": "c0-port-0",
       "targetHandle": "port-0"
     },
     {
       "id": "api-pod-https:api-svc-https",
       "source": "pod-1",
       "target": "svc-1",
-      "sourceHandle": "port-1",
+      "sourceHandle": "c0-port-1",
       "targetHandle": "port-1"
     },
     {
@@ -101,20 +113,20 @@
       "source": "svc-1",
       "target": "pod-2",
       "sourceHandle": "targetPort-0",
-      "targetHandle": "env-1"
+      "targetHandle": "c0-env-1"
     },
     {
       "id": "front-pod-http:front-svc-http",
       "source": "pod-2",
       "target": "svc-2",
-      "sourceHandle": "port-0",
+      "sourceHandle": "c0-port-0",
       "targetHandle": "port-0"
     },
     {
       "id": "front-pod-https:front-svc-https",
       "source": "pod-2",
       "target": "svc-2",
-      "sourceHandle": "port-1",
+      "sourceHandle": "c0-port-1",
       "targetHandle": "port-1"
     },
     {

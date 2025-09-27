@@ -15,10 +15,10 @@
 
 .service-header {
   display: flex;
-  justify-content: space-between; /* keeps name left, type right */
+  justify-content: space-between;
   align-items: center;
   margin-bottom: 6px;
-  gap: 8px; /* space between children if needed */
+  gap: 8px;
 }
 
 .service-name {
@@ -30,7 +30,7 @@
 .service-type {
   font-size: 1.2rem;
   color: #4a5568;
-  margin-left: 12px; /* adds space from the name */
+  margin-left: 12px;
 }
 
 .service-divider {
@@ -39,10 +39,20 @@
   margin-bottom: 6px;
 }
 
+.service-port-section {
+  margin-top: 18px;
+}
+
+.service-port-title {
+  font-weight: bold;
+  font-size: 1.1rem;
+  color: #2d3748;
+  margin-bottom: 4px;
+}
+
 .service-port {
   display: flex;
   align-items: center;
-  margin-bottom: 4px;
   position: relative;
 }
 
@@ -51,26 +61,25 @@
   color: #4a5568;
 }
 
-/* optional class to align output text to right side */
 .service-port-text.output {
   margin-left: auto;
 }
 
 .service-input-handle,
 .service-port-handle {
-  width: 12px;
-  height: 12px;
+  width: 16px;
+  height: 16px;
   background-color: #4f46e5;
-  border: 2px solid white;
+  border: 2px solid #cbd5e0;
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
 }
 
 .service-input-handle {
-  left: -22.5px;
+  left: -20.5px;
 }
 
 .service-port-handle {
-  right: -22.5px;
+  right: -20.5px;
 }
