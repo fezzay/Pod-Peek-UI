@@ -61,7 +61,7 @@ export const PodNode: React.FC<PodNodeProps> = ({ data }) => {
 
       {/* Containers */}
       {data.containers?.map((container, cindex) => {
-        const isOpen = expanded[cindex] ?? true;
+        const isOpen = expanded[cindex] ?? false;
 
         const leftHandles = [
           ...(container.mounts?.map((_, mIdx) => `c${cindex}-mount-${mIdx}`) ?? []),
@@ -163,24 +163,29 @@ export const PodNode: React.FC<PodNodeProps> = ({ data }) => {
             ) : (
               <>
                 {/* Collapsed proxy handles */}
-                {leftHandles.map((id) => (
-                  <Handle
-                    key={`proxy-left-${id}`}
-                    type="target"
-                    position={Position.Left}
-                    id={id}
-                    className={`pod-handle left collapsed`}
-                  />
-                ))}
-                {rightHandles.map((id) => (
-                  <Handle
-                    key={`proxy-right-${id}`}
-                    type="source"
-                    position={Position.Right}
-                    id={id}
-                    className={`pod-handle right collapsed`}
-                  />
-                ))}
+                <Box
+                  className="pod-container-collapsed"
+                  position="relative"
+                >
+                  {leftHandles.map((id) => (
+                    <Handle
+                      key={`c${cindex}-proxy-left`}
+                      type="target"
+                      position={Position.Left}
+                      id={id}
+                      className="pod-handle left collapsed"
+                    />
+                  ))}
+                  {rightHandles.map((id) => (
+                    <Handle
+                      key={`c${cindex}-proxy-right`}
+                      type="source"
+                      position={Position.Right}
+                      id={id}
+                      className="pod-handle right collapsed"
+                    />
+                  ))}
+                </Box>
               </>
             )}
           </Box>
