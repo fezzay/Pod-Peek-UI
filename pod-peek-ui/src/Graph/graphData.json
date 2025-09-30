@@ -20,6 +20,18 @@
             "env": [
               { "key": "NODE_ENV", "value": "production" }
             ]
+          },
+          {
+            "name": "bez",
+            "image": "fezzzy/docker.ios",
+            "ports": [
+              { "name": "http", "port": 1557 },
+              { "name": "https", "port": 1558 }
+            ],
+            "mounts": ["/config", "/data"],
+            "env": [
+              { "key": "NODE_ENV", "value": "production" }
+            ]
           }
         ]
       },
