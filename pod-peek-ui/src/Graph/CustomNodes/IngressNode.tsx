@@ -26,14 +26,14 @@ export const IngressNode: React.FC<IngressNodeProps> = ({ data }) => {
           <Text fontSize="sm" fontWeight="bold" mb={1}>
             Rules
           </Text>
-          {data.rules.map((rule, idx) => {
+          {data.rules.map((rule) => {
             const url = `${data.hosts[0]}${rule.path}`;
             return (
-              <Flex key={idx} className="ingress-rule" justify="flex-start">
+              <Flex key={rule.port} className="ingress-rule" justify="flex-start">
                 <Handle
                   type="target"
                   position={Position.Left}
-                  id={`rule-${idx}`}
+                  id={`rule-${rule.port}`}
                   className="ingress-output-handle"
                 />
                 <Link

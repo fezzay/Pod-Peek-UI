@@ -1,32 +1,20 @@
 {
   "nodes": [
     {
-      "id": "pod-1",
+      "id": "f4d0e9e2-1a3a-4e34-9b1a-7e2c5d3b9a20",
       "type": "pod",
       "data": {
         "podName": "api-backend-pod",
         "status": "Running",
         "replicasRunning": 3,
-        "replicasTotal": 3,
+        "replicasCompleted": 3,
         "containers": [
           {
             "name": "be",
             "image": "fezzzy/docker.io",
             "ports": [
-              { "name": "http", "port": 1557 },
-              { "name": "https", "port": 1558 }
-            ],
-            "mounts": ["/config", "/data"],
-            "env": [
-              { "key": "NODE_ENV", "value": "production" }
-            ]
-          },
-          {
-            "name": "bez",
-            "image": "fezzzy/docker.ios",
-            "ports": [
-              { "name": "http", "port": 1557 },
-              { "name": "https", "port": 1558 }
+              { "name": "http", "InternalPort": 1557 },
+              { "name": "https", "InternalPort": 1558 }
             ],
             "mounts": ["/config", "/data"],
             "env": [
@@ -38,61 +26,21 @@
       "position": { "x": 0, "y": 200 }
     },
     {
-      "id": "svc-1",
+      "id": "e7b6a4d5-9c88-4a3c-ae3f-5e0c7c9d2b51",
       "type": "service",
       "data": {
         "serviceName": "api-backend-service",
         "type": "ClusterIP",
         "ports": [
-          { "name": "http", "port": 1557, "targetPort": 1557 },
-          { "name": "https", "port": 1558, "targetPort": 1558 }
+          { "name": "http", "InternalPort": 1557, "TargetPort": 1557 },
+          { "name": "https", "InternalPort": 1558, "TargetPort": 1558 }
         ],
-        "selectors": ["app=nginx"]
+        "selector": { "app": "api-backend" }
       },
       "position": { "x": 500, "y": 250 }
     },
     {
-      "id": "pod-2",
-      "type": "pod",
-      "data": {
-        "podName": "frontend-pod",
-        "status": "Pending",
-        "replicasRunning": 4,
-        "replicasTotal": 5,
-        "containers": [
-          {
-            "name": "fe",
-            "image": "fezzzy/docker.io",
-            "ports": [
-              { "name": "http", "port": 80 },
-              { "name": "https", "port": 443}
-            ],
-            "mounts": ["/data"],
-            "env": [
-              { "key": "NODE_ENV", "value": "staging" },
-              { "key": "BACKEND_URL", "value": "api-backend-service:1557" }
-            ]
-          }
-        ]
-      },
-      "position": { "x": 1000, "y": 50 }
-    },
-    {
-      "id": "svc-2",
-      "type": "service",
-      "data": {
-        "serviceName": "frontend-service",
-        "type": "ClusterIP",
-        "ports": [
-          { "name": "http", "port": 80, "targetPort": 80 },
-          { "name": "https", "port": 443, "targetPort": 443 }
-        ],
-        "selectors": ["app=nginx"]
-      },
-      "position": { "x": 1500, "y": 150 }
-    },
-    {
-      "id": "ing-1",
+      "id": "c8f3b0a2-7a4b-4a1f-a3e6-9d2f5b1c0e7f",
       "type": "ingress",
       "data": {
         "ingressName": "main-ingress",
@@ -107,53 +55,25 @@
   ],
   "edges": [
     {
-      "id": "api-pod-http:api-svc-http",
-      "source": "pod-1",
-      "target": "svc-1",
-      "sourceHandle": "c0-port-0",
-      "targetHandle": "port-0"
+      "id": "7a2c4b8f-9d4f-4a33-b4c3-e8f7d1a5f9c2",
+      "source": "f4d0e9e2-1a3a-4e34-9b1a-7e2c5d3b9a20",
+      "target": "e7b6a4d5-9c88-4a3c-ae3f-5e0c7c9d2b51",
+      "sourceHandle": "be-port-1557",
+      "targetHandle": "port-1557"
     },
     {
-      "id": "api-pod-https:api-svc-https",
-      "source": "pod-1",
-      "target": "svc-1",
-      "sourceHandle": "c0-port-1",
-      "targetHandle": "port-1"
+      "id": "9b1e6f0c-4c7f-4d32-a1e3-6c9e2b5f1d4a",
+      "source": "e7b6a4d5-9c88-4a3c-ae3f-5e0c7c9d2b51",
+      "target": "f4d0e9e2-1a3a-4e34-9b1a-7e2c5d3b9a20",
+      "sourceHandle": "targetPort-1557",
+      "targetHandle": "be-env-NODE_ENV"
     },
     {
-      "id": "api-svc-http:front-pod-env",
-      "source": "svc-1",
-      "target": "pod-2",
-      "sourceHandle": "targetPort-0",
-      "targetHandle": "c0-env-1"
-    },
-    {
-      "id": "front-pod-http:front-svc-http",
-      "source": "pod-2",
-      "target": "svc-2",
-      "sourceHandle": "c0-port-0",
-      "targetHandle": "port-0"
-    },
-    {
-      "id": "front-pod-https:front-svc-https",
-      "source": "pod-2",
-      "target": "svc-2",
-      "sourceHandle": "c0-port-1",
-      "targetHandle": "port-1"
-    },
-    {
-      "id": "front-svc-https:ingress-front",
-      "source": "svc-2",
-      "target": "ing-1",
-      "sourceHandle": "targetPort-1",
-      "targetHandle": "rule-0"
-    },
-    {
-      "id": "api-svc-https:ingress-back",
-      "source": "svc-1",
-      "target": "ing-1",
-      "sourceHandle": "targetPort-1",
-      "targetHandle": "rule-1"
+      "id": "c1d2f3a4-b5e6-4c7d-9a8b-0e1f2d3c4b5a",
+      "source": "e7b6a4d5-9c88-4a3c-ae3f-5e0c7c9d2b51",
+      "target": "c8f3b0a2-7a4b-4a1f-a3e6-9d2f5b1c0e7f",
+      "sourceHandle": "targetPort-1558",
+      "targetHandle": "rule-1558"
     }
   ]
 }
