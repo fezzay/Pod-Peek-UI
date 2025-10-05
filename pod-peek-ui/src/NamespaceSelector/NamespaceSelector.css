@@ -1,0 +1,44 @@
+/* Namespace Selector Container */
+.namespace-selector {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+/* Label */
+.namespace-selector-label {
+  font-weight: bold;
+  font-size: 1rem;
+  color: #1a202c; /* dark text */
+}
+
+/* React Select overrides */
+.namespace-selector .react-select__control {
+  width: 300px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  background-color: white;
+  min-height: 38px;
+}
+
+.namespace-selector .react-select__single-value {
+  color: black;
+}
+
+.namespace-selector .react-select__menu {
+  z-index: 9999; /* ensures dropdown overlays any other content */
+  background-color: white;
+}
+
+.namespace-selector .react-select__option {
+  color: black;
+}
+
+.namespace-selector .react-select__option--is-selected {
+  background-color: #3182ce; /* Chakra blue for selected */
+  color: white;
+}
+
+.namespace-selector .react-select__option--is-focused {
+  background-color: #bee3f8; /* light blue for hover/focus */
+}

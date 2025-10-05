@@ -7,16 +7,16 @@ import "./PodNode.css";
 
 interface PodNodeProps {
   data: {
-    podName: string;
+    name: string;
     status: string;
     replicasRunning?: number;
-    replicasTotal?: number;
+    replicasCompleted?: number;
     containers: {
       name: string;
       image?: string;
-      ports: { name: string; InternalPort: number }[];
+      ports: { name: string; internalPort: number }[];
       mounts: string[];
-      env: { key: string; value: string }[];
+      environmentVariables: Record<string, string>; // now a dictionary
     }[];
   };
 }
@@ -25,8 +25,8 @@ export const PodNode: React.FC<PodNodeProps> = ({ data }) => {
   const [expanded, setExpanded] = useState<Record<string, boolean>>({});
 
   const percent =
-    data.replicasRunning && data.replicasTotal
-      ? Math.round((data.replicasRunning / data.replicasTotal) * 100)
+    data.replicasRunning && data.replicasCompleted
+      ? Math.round((data.replicasRunning / data.replicasCompleted) * 100)
       : 0;
 
   const statusColor = data.status === "Running" ? "#4ade80" : "#f56565";
@@ -35,27 +35,28 @@ export const PodNode: React.FC<PodNodeProps> = ({ data }) => {
     <Box className="pod-node">
       {/* Pod Header */}
       <Flex className="pod-header">
-        <Text className="pod-name">{data.podName}</Text>
+        <Text className="pod-name">{data.name}</Text>
         <Flex align="center" gap={3}>
           <Text className="pod-status" color={statusColor}>
             {data.status}
           </Text>
-          {data.replicasRunning !== undefined && data.replicasTotal !== undefined && (
-            <Box className="pod-replicas-circle">
-              <CircularProgressbar
-                value={percent}
-                text={""}
-                styles={buildStyles({
-                  pathColor: statusColor,
-                  trailColor: "#e2e8f0",
-                  strokeLinecap: "round",
-                })}
-              />
-              <Box className="pod-replicas-text">
-                {data.replicasRunning}/{data.replicasTotal}
+          {data.replicasRunning !== undefined &&
+            data.replicasCompleted !== undefined && (
+              <Box className="pod-replicas-circle">
+                <CircularProgressbar
+                  value={percent}
+                  text={""}
+                  styles={buildStyles({
+                    pathColor: statusColor,
+                    trailColor: "#e2e8f0",
+                    strokeLinecap: "round",
+                  })}
+                />
+                <Box className="pod-replicas-text">
+                  {data.replicasRunning}/{data.replicasCompleted}
+                </Box>
               </Box>
-            </Box>
-          )}
+            )}
         </Flex>
       </Flex>
 
@@ -63,12 +64,17 @@ export const PodNode: React.FC<PodNodeProps> = ({ data }) => {
       {data.containers?.map((container) => {
         const isOpen = expanded[container.name] ?? false;
 
+        // Convert env object → array for easier handling
+        const envEntries = Object.entries(container.environmentVariables ?? {});
+
         const leftHandles = [
           ...(container.mounts?.map((mount) => `${container.name}-mount-${mount}`) ?? []),
-          ...(container.env?.map((env) => `${container.name}-env-${env.key}`) ?? []),
+          ...envEntries.map(([key]) => `${container.name}-env-${key}`),
         ];
 
-        const rightHandles = [...(container.ports?.map((port) => `${container.name}-port-${port.InternalPort}`) ?? [])];
+        const rightHandles = [
+          ...(container.ports?.map((port) => `${container.name}-port-${port.internalPort}`) ?? []),
+        ];
 
         return (
           <Box key={container.name} className="pod-container-card">
@@ -82,7 +88,10 @@ export const PodNode: React.FC<PodNodeProps> = ({ data }) => {
                 as={isOpen ? FiChevronUp : FiChevronDown}
                 size="sm"
                 onClick={() =>
-                  setExpanded(prev => ({ ...prev, [container.name]: !isOpen }))
+                  setExpanded((prev) => ({
+                    ...prev,
+                    [container.name]: !isOpen,
+                  }))
                 }
                 variant="ghost"
                 color="#1a202c"
@@ -101,7 +110,10 @@ export const PodNode: React.FC<PodNodeProps> = ({ data }) => {
                     <Text className="pod-section-title left">Volume Mounts</Text>
                     <Box className="pod-divider" />
                     {container.mounts.map((mount, mIdx) => (
-                      <Flex key={`${container.name}-mount-${mIdx}`} className="pod-item-row">
+                      <Flex
+                        key={`${container.name}-mount-${mIdx}`}
+                        className="pod-item-row"
+                      >
                         <Handle
                           type="target"
                           position={Position.Left}
@@ -126,12 +138,12 @@ export const PodNode: React.FC<PodNodeProps> = ({ data }) => {
                         justify="flex-end"
                       >
                         <Text className="pod-item-text right">
-                          {port.name}:{port.InternalPort}
+                          {port.name}:{port.internalPort}
                         </Text>
                         <Handle
                           type="source"
                           position={Position.Right}
-                          id={`${container.name}-port-${port.InternalPort}`}
+                          id={`${container.name}-port-${port.internalPort}`}
                           className="pod-handle right"
                         />
                       </Flex>
@@ -140,20 +152,23 @@ export const PodNode: React.FC<PodNodeProps> = ({ data }) => {
                 )}
 
                 {/* Env */}
-                {container.env?.length > 0 && (
+                {envEntries.length > 0 && (
                   <>
                     <Text className="pod-section-title left">Environment</Text>
                     <Box className="pod-divider" />
-                    {container.env.map((envVar) => (
-                      <Flex key={`${container.name}-env-${envVar.key}`} className="pod-item-row">
+                    {envEntries.map(([key, value]) => (
+                      <Flex
+                        key={`${container.name}-env-${key}`}
+                        className="pod-item-row"
+                      >
                         <Handle
                           type="target"
                           position={Position.Left}
-                          id={`${container.name}-env-${envVar.key}`}
+                          id={`${container.name}-env-${key}`}
                           className="pod-handle left"
                         />
                         <Text className="pod-item-text left">
-                          {envVar.key}: {envVar.value}
+                          {key}: {String(value)}
                         </Text>
                       </Flex>
                     ))}
@@ -163,29 +178,26 @@ export const PodNode: React.FC<PodNodeProps> = ({ data }) => {
             ) : (
               <>
                 {/* Collapsed proxy handles */}
-                <Box 
-                  className="pod-container-collapsed"
-                  position="relative" 
-                >
-                  {leftHandles.map((id) => ( 
-                    <Handle 
-                      key={`${container.name}-proxy-left-${id}`} 
-                      type="target" 
-                      position={Position.Left} 
-                      id={id} 
-                      className="pod-handle left collapsed" 
-                    /> 
-                  ))} 
-                  {rightHandles.map((id) => ( 
-                    <Handle 
-                      key={`${container.name}-proxy-right-${id}`} 
-                      type="source" 
-                      position={Position.Right} 
-                      id={id} 
-                      className="pod-handle right collapsed" 
-                    /> 
-                  ))} 
-                </Box> 
+                <Box className="pod-container-collapsed" position="relative">
+                  {leftHandles.map((id) => (
+                    <Handle
+                      key={`${container.name}-proxy-left-${id}`}
+                      type="target"
+                      position={Position.Left}
+                      id={id}
+                      className="pod-handle left collapsed"
+                    />
+                  ))}
+                  {rightHandles.map((id) => (
+                    <Handle
+                      key={`${container.name}-proxy-right-${id}`}
+                      type="source"
+                      position={Position.Right}
+                      id={id}
+                      className="pod-handle right collapsed"
+                    />
+                  ))}
+                </Box>
               </>
             )}
           </Box>

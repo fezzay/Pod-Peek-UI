@@ -4,7 +4,7 @@ import "./IngressNode.css";
 
 interface IngressNodeProps {
   data: {
-    ingressName: string;
+    name: string;
     hosts: string[];
     rules: { path: string; service: string; port: number }[];
   };
@@ -15,7 +15,7 @@ export const IngressNode: React.FC<IngressNodeProps> = ({ data }) => {
     <Box className="ingress-node">
       {/* Header */}
       <Flex className="ingress-header">
-        <Text className="ingress-name">{data.ingressName}</Text>
+        <Text className="ingress-name">{data.name}</Text>
       </Flex>
 
       <Box className="ingress-divider" />

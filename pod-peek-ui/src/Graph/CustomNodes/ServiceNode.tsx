@@ -4,9 +4,14 @@ import "./ServiceNode.css";
 
 interface ServiceNodeProps {
   data: {
-    serviceName: string;
+    name: string;
     type: string;
-    ports: { InternalPort: number; TargetPort?: number; nodePort?: number; name: string }[];
+    ports: {
+      internalPort: number;
+      targetPort?: number | null;
+      nodePort?: number | null;
+      name?: string | null;
+    }[];
   };
 }
 
@@ -15,24 +20,26 @@ export const ServiceNode: React.FC<ServiceNodeProps> = ({ data }) => {
     <Box className="service-node">
       {/* Node Header */}
       <Flex className="service-header">
-        <Text className="service-name">{data.serviceName}</Text>
+        <Text className="service-name">{data.name}</Text>
         <Text className="service-type">{data.type}</Text>
       </Flex>
 
       <Box className="service-divider" />
 
       {/* Port Sections */}
-      {data.ports.map((port) => {
-        const handleId = port.name.toLowerCase().replace(/\s+/g, "-");
+      {data.ports?.map((port, idx) => {
+        // Safely generate handle ID
+        const portName = port.name ?? `port-${port.internalPort}`;
+        const handleId = portName.toLowerCase().replace(/\s+/g, "-");
 
         return (
-          <Box key={handleId} className="service-port-section">
+          <Box key={handleId + idx} className="service-port-section">
             {/* Port Title */}
             <Text className="service-port-title" mb={1}>
-              {port.name.toUpperCase()}
+              {port.name?.toUpperCase() ?? `PORT ${port.internalPort}`}
             </Text>
 
-            {/* Divider for this port */}
+            {/* Divider */}
             <Box className="service-divider" />
 
             {/* Input & Output */}
@@ -42,23 +49,23 @@ export const ServiceNode: React.FC<ServiceNodeProps> = ({ data }) => {
                 <Handle
                   type="target"
                   position={Position.Left}
-                  id={`port-${port.InternalPort}`}
+                  id={`port-${port.internalPort}`}
                   className="service-input-handle"
                 />
                 <Text className="service-port-text" ml={2}>
-                  {port.InternalPort}
+                  {port.internalPort}
                 </Text>
               </Flex>
 
               {/* Output */}
               <Flex align="center">
                 <Text className="service-port-text output" mr={2}>
-                  {port.TargetPort ?? port.nodePort ?? "-"}
+                  {port.targetPort ?? port.nodePort ?? "-"}
                 </Text>
                 <Handle
                   type="source"
                   position={Position.Right}
-                  id={`targetPort-${port.TargetPort}`}
+                  id={`targetPort-${port.targetPort ?? port.nodePort ?? port.internalPort}`}
                   className="service-port-handle"
                 />
               </Flex>

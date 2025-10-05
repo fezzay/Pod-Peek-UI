@@ -5,6 +5,7 @@ html, body, #root {
   width: 100%;
   height: 100%;
   background-color: #f3f4f6; /* light gray background */
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
 /* App container */
@@ -14,7 +15,7 @@ html, body, #root {
   flex-direction: column;
 }
 
-/* Navbar remains full width */
+/* Navbar full width */
 .app-navbar {
   width: 100%;
 }
@@ -23,10 +24,11 @@ html, body, #root {
 .app-content {
   flex: 1;
   display: flex;
-  justify-content: center; /* centers the card horizontally */
-  align-items: flex-start; /* aligns to top */
+  flex-direction: column; /* stack cards vertically */
+  align-items: center; /* center horizontally */
   padding: 2rem;
   box-sizing: border-box;
+  gap: 1.5rem; /* space between cards */
 }
 
 /* Card container */
@@ -35,18 +37,54 @@ html, body, #root {
   background-color: white;
   border-radius: 16px;
   box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-  overflow: hidden;
+  overflow: visible; /* allow dropdowns to escape card */
   transition: transform 0.2s ease, box-shadow 0.2s ease;
+  padding: 1.5rem;
+  box-sizing: border-box;
 }
 
-/* Responsive padding */
+/* Namespace selector dropdown fixes */
+.app-card .react-select__control {
+  width: 300px;
+  border-radius: 8px;
+  border-color: #ccc;
+  background-color: white;
+}
+
+.app-card .react-select__single-value {
+  color: black;
+}
+
+.app-card .react-select__menu {
+  z-index: 9999; /* ensures dropdown overlays graph */
+}
+
+/* Graph container */
+.reactflow-wrapper {
+  width: 100%;
+  height: 600px; /* adjust as needed */
+}
+
+/* Responsive adjustments */
+@media (max-width: 1024px) {
+  .app-content {
+    padding: 1.5rem;
+    gap: 1rem;
+  }
+
+  .app-card {
+    padding: 1rem;
+    border-radius: 12px;
+  }
+}
+
 @media (max-width: 768px) {
   .app-content {
     padding: 1rem;
   }
 
   .app-card {
-    padding: 1rem;
-    border-radius: 12px;
+    padding: 0.8rem;
+    border-radius: 10px;
   }
 }

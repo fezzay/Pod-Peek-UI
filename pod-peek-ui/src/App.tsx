@@ -1,11 +1,15 @@
-import { ChakraProvider, defaultSystem } from "@chakra-ui/react";
 import { useState } from "react";
+import { ChakraProvider, defaultSystem, Box } from "@chakra-ui/react";
 import { Graph } from "./Graph/Graph";
 import { Navbar } from "./Navbar/Navbar";
+import { NamespaceSelector } from "./NamespaceSelector/NamespaceSelector";
 import "./App.css";
+import type { JSX } from "react";
 
 function App(): JSX.Element {
-  const [count, setCount] = useState<number>(0);
+  const [namespace, setNamespace] = useState("pod-peek");
+
+  const namespaces = ["default", "jellyfin", "pod-peek"];
 
   return (
     <ChakraProvider value={defaultSystem}>
@@ -15,9 +19,15 @@ function App(): JSX.Element {
         </div>
 
         <main className="app-content">
-          <div className="app-card">
-            <Graph />
-          </div>
+          <NamespaceSelector
+            namespace={namespace}
+            setNamespace={setNamespace}
+            namespaces={namespaces}
+          />
+
+          <Box className="app-card">
+            <Graph namespace={namespace} />
+          </Box>
         </main>
       </div>
     </ChakraProvider>
