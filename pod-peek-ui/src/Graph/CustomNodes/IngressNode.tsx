@@ -36,12 +36,6 @@ export const IngressNode: React.FC<IngressNodeProps> = ({ data }) => {
                   id={`rule-${rule.port}`}
                   className="ingress-input-handle"
                 />
-                <Handle
-                  type="target"
-                  position={Position.Right}
-                  id={`ingress-${url}`}
-                  className="ingress-output-handle"
-                />
                 <Link
                   href={url.startsWith("http") ? url : `https://${url}`}
                   textDecoration="underline"
@@ -49,6 +43,12 @@ export const IngressNode: React.FC<IngressNodeProps> = ({ data }) => {
                 >
                   {url}
                 </Link>
+                <Handle
+                  type="target"
+                  position={Position.Right}
+                  id={`ingress-${url}`}
+                  className="ingress-output-handle"
+                />
               </Flex>
             );
           })}
