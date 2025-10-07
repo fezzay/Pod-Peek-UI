@@ -32,7 +32,7 @@ export const Graph: React.FC<GraphProps> = ({ namespace }) => {
     const fetchGraphData = async () => {
       try {
         setLoading(true);
-        const res = await fetch(`http://podpeek-api:8080/Graph/${namespace}`); // use namespace dynamically
+        const res = await fetch(`http://podpeek-api.local/Graph/${namespace}`); // use namespace dynamically
         if (!res.ok) throw new Error(`Failed to fetch: ${res.statusText}`);
         const data = await res.json();
 

@@ -38,7 +38,7 @@ export const IngressNode: React.FC<IngressNodeProps> = ({ data }) => {
                 />
                 <Handle
                   type="target"
-                  position={Position.Left}
+                  position={Position.Right}
                   id={`ingress-${url}`}
                   className="ingress-output-handle"
                 />
