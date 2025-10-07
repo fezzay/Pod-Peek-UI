@@ -58,11 +58,11 @@
   
   /* Hosts: handle on the right */
   .ingress-input-handle {
-    right: -24.5px;
+    left: -24.5px;
   }
   
   /* Rules: handle on the left */
   .ingress-output-handle {
-    left: -24.5px;
+    right: -24.5px;
   }
   
