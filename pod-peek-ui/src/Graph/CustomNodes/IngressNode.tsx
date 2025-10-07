@@ -46,7 +46,7 @@ export const IngressNode: React.FC<IngressNodeProps> = ({ data }) => {
                 <Handle
                   type="target"
                   position={Position.Right}
-                  id={`ingress-${url}`}
+                  id={`ingress-${data.hosts[0]}`}
                   className="ingress-output-handle"
                 />
               </Flex>
